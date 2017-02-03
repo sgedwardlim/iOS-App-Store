@@ -21,9 +21,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.makeKeyAndVisible()
         
         let layout = UICollectionViewFlowLayout()
-        let featuredAppsController = FeaturedAppsController(collectionViewLayout: layout)
+        let featuredAppsView = FeaturedAppsView(collectionViewLayout: layout)
         
-        window?.rootViewController = UINavigationController(rootViewController: featuredAppsController)
+        window?.rootViewController = UINavigationController(rootViewController: featuredAppsView)
     
         return true
     }

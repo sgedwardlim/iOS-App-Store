@@ -23,6 +23,14 @@ class CategoryCell: UICollectionViewCell, UICollectionViewDataSource, UICollecti
     // MARK: Properties
     private let cellId = "AppCellId"
     
+    var appCategory: AppCategory? {
+        didSet {
+            if let title = appCategory?.name {
+                categoryTitle.text = title
+            }
+        }
+    }
+    
     let appsCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
@@ -33,7 +41,7 @@ class CategoryCell: UICollectionViewCell, UICollectionViewDataSource, UICollecti
         return collectionView
     }()
     
-    let categoryTitle: UILabel = {
+    var categoryTitle: UILabel = {
         let label = UILabel()
         label.text = "Category Title"
         label.font = UIFont.systemFont(ofSize: 18)
@@ -70,11 +78,16 @@ class CategoryCell: UICollectionViewCell, UICollectionViewDataSource, UICollecti
     
     // MARK: UICollectionViewDelegate Functions
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 5
+        if let count = appCategory?.apps?.count {
+            return count
+        }
+        return 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        return collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath)
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! AppCell
+        cell.app = appCategory?.apps?[indexPath.item]
+        return cell
     }
     
     // MARK: UICollectionViewDataSource
@@ -88,70 +101,6 @@ class CategoryCell: UICollectionViewCell, UICollectionViewDataSource, UICollecti
     }
     
 }
-
-class AppCell: UICollectionViewCell {
-    
-    // MARK: Initalization
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setupViews()
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    // MARK: Properties
-    let imageView: UIImageView = {
-        let iv = UIImageView()
-        iv.image = UIImage(named: "frozen")
-        iv.contentMode = .scaleAspectFill
-        iv.layer.cornerRadius = 16
-        iv.layer.masksToBounds = true
-        return iv
-    }()
-    
-    let nameLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Disney Build it: Frozen"
-        label.font = UIFont.systemFont(ofSize: 11)
-        label.numberOfLines = 2
-//        label.backgroundColor = UIColor.red
-        return label
-    }()
-    
-    let categoryLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Entertainment"
-        label.font = UIFont.systemFont(ofSize: 10)
-        label.textColor = UIColor.darkGray
-//        label.backgroundColor = UIColor.blue
-        return label
-    }()
-    
-    let priceLabel: UILabel = {
-        let label = UILabel()
-        label.text = "$3.99"
-        label.font = UIFont.systemFont(ofSize: 10)
-        label.textColor = UIColor.darkGray
-//        label.backgroundColor = UIColor.blue
-        return label
-    }()
-    
-    func setupViews() {
-        addSubview(imageView)
-        addSubview(nameLabel)
-        addSubview(categoryLabel)
-        addSubview(priceLabel)
-        
-        imageView.frame = CGRect(x: 0, y: 0, width: frame.width, height: frame.width)
-        nameLabel.frame = CGRect(x: 0, y: frame.width + 2, width: frame.width, height: 30)
-        categoryLabel.frame = CGRect(x: 0, y: nameLabel.frame.maxY, width: frame.width, height: 10)
-        priceLabel.frame = CGRect(x: 0, y: categoryLabel.frame.maxY + 2, width: frame.width, height: 10)
-        
-    }
-}
-
 
 
 
