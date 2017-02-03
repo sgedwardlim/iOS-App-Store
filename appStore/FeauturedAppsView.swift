@@ -44,7 +44,7 @@ class FeaturedAppsView: UICollectionViewController, UICollectionViewDelegateFlow
         if indexPath.item == 2 {
             return CGSize(width: view.frame.width, height: 120)
         }
-        return CGSize(width: view.frame.width, height: 180)
+        return CGSize(width: view.frame.width, height: 176)
     }
     
     // MARK: UICollectionViewDelegateFlowLayout Functions
@@ -82,8 +82,11 @@ class LargeCategoryCell: CategoryCell {
     }
     
     private class LargeAppCell: AppCell {
-        internal override func setupViews() {
-            
+        override func setupViews() {
+            imageView.translatesAutoresizingMaskIntoConstraints = false
+            addSubview(imageView)
+            addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[v0]|", options: NSLayoutFormatOptions(), metrics: nil, views: ["v0": imageView]))
+            addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[v0]-8-|", options: NSLayoutFormatOptions(), metrics: nil, views: ["v0": imageView]))
         }
     }
 }

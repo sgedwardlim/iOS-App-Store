@@ -38,13 +38,15 @@ class CategoryCell: UICollectionViewCell, UICollectionViewDataSource, UICollecti
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.backgroundColor = UIColor.clear
         collectionView.translatesAutoresizingMaskIntoConstraints = false
+        
+        collectionView.showsHorizontalScrollIndicator = false
         return collectionView
     }()
     
     var categoryTitle: UILabel = {
         let label = UILabel()
         label.text = "Category Title"
-        label.font = UIFont.systemFont(ofSize: 18)
+        label.font = UIFont.systemFont(ofSize: 14)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
