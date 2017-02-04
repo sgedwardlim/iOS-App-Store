@@ -28,6 +28,8 @@ class CategoryCell: UICollectionViewCell, UICollectionViewDataSource, UICollecti
             if let title = appCategory?.name {
                 categoryTitle.text = title
             }
+
+            appsCollectionView.reloadData()
         }
     }
     

@@ -13,7 +13,9 @@ class FeaturedAppsView: UICollectionViewController, UICollectionViewDelegateFlow
     // MARK: Properties
     private let cellId = "featuredAppsCellID"
     private let largeCellId = "largeCellId"
+    private let headerId = "headerId"
     
+    private var featuredApps: FeaturedApps?
     private var appCategories: [AppCategory]?
 
     override func viewDidLoad() {
@@ -23,9 +25,11 @@ class FeaturedAppsView: UICollectionViewController, UICollectionViewDelegateFlow
         collectionView?.backgroundColor = UIColor.white
         collectionView?.register(CategoryCell.self, forCellWithReuseIdentifier: cellId)
         collectionView?.register(LargeCategoryCell.self, forCellWithReuseIdentifier: largeCellId)
+        collectionView?.register(Header.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: headerId)
         
-        FeaturedAppsController.fetchFeaturedApps { (appCategories) in
-            self.appCategories = appCategories
+        FeaturedAppsController.fetchFeaturedApps { (featuredApps) in
+            self.featuredApps = featuredApps
+            self.appCategories = featuredApps.appCategories
             self.collectionView?.reloadData()
         }
 
@@ -60,6 +64,65 @@ class FeaturedAppsView: UICollectionViewController, UICollectionViewDelegateFlow
         cell.appCategory = appCategories?[indexPath.item]
         return cell
     }
+    
+    // Returns cell for header
+    override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: headerId, for: indexPath) as! Header
+        
+        header.appCategory = featuredApps?.bannerCategory
+        
+        return header
+    }
+    
+    // Layout for header view
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        return CGSize(width: view.frame.width, height: 110)
+    }
+}
+
+class Header: CategoryCell {
+    
+    let bannerCellId = "bannerCellId"
+    
+    override func setupViews() {
+        appsCollectionView.dataSource = self
+        appsCollectionView.delegate = self
+        
+        appsCollectionView.register(BannerCell.self, forCellWithReuseIdentifier: bannerCellId)
+        
+        addSubview(appsCollectionView)
+        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[v0]|", options: NSLayoutFormatOptions(), metrics: nil, views: ["v0": appsCollectionView]))
+        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[v0]|", options: NSLayoutFormatOptions(), metrics: nil, views: ["v0": appsCollectionView]))
+    }
+    
+    // Margins for insets
+    override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        return UIEdgeInsets(top: 0,left: 0,bottom: 0,right: 0)
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: bannerCellId, for: indexPath) as! BannerCell
+        cell.app = appCategory?.apps?[indexPath.item]
+        return cell
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: 220, height: frame.height)
+    }
+    
+    private class BannerCell: AppCell {
+        override func setupViews() {
+            imageView.layer.borderColor = UIColor(white: 0.5, alpha: 0.5).cgColor
+            imageView.layer.borderWidth = 0.5
+            imageView.contentMode = .scaleToFill
+            imageView.layer.cornerRadius = 0
+            imageView.translatesAutoresizingMaskIntoConstraints = false
+            
+            addSubview(imageView)
+            addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[v0]|", options: NSLayoutFormatOptions(), metrics: nil, views: ["v0": imageView]))
+            addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[v0]|", options: NSLayoutFormatOptions(), metrics: nil, views: ["v0": imageView]))
+        }
+    }
 }
 
 class LargeCategoryCell: CategoryCell {
@@ -90,22 +153,6 @@ class LargeCategoryCell: CategoryCell {
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

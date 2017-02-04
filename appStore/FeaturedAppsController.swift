@@ -10,7 +10,7 @@ import UIKit
 
 class FeaturedAppsController {
     
-    static func fetchFeaturedApps(completionHandler: @escaping ([AppCategory]) -> ()) {
+    static func fetchFeaturedApps(completionHandler: @escaping (FeaturedApps) -> ()) {
         let urlString = "http://www.statsallday.com/appstore/featured"
         let urlRequest = URLRequest(url: URL(string: urlString)!)
         let session = URLSession.shared
@@ -24,20 +24,13 @@ class FeaturedAppsController {
                 do {
                     let json = try JSONSerialization.jsonObject(with: data!, options: .mutableContainers) as! [String: AnyObject]
                     
-                    var appCategories = [AppCategory]()
+                    let featuredApps = FeaturedApps()
                     
-                    if let categories = json["categories"] as? [[String: AnyObject]] {
-                        
-                        for category in categories {
-                            let appCategory = AppCategory()
-                            appCategory.setValuesForKeys(category)
-                            appCategories.append(appCategory)
-                        }
-                    }
+                    featuredApps.setValuesForKeys(json)
                     
-                    // Completion handler "returns" the value of our populated appCategories
+                    // Completion handler "returns" the value of our populated featuredApps
                     DispatchQueue.main.async(execute: {
-                        completionHandler(appCategories)
+                        completionHandler(featuredApps)
                     })
                     
                 } catch {
